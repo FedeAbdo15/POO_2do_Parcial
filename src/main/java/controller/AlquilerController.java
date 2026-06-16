@@ -92,11 +92,17 @@ public class AlquilerController {
             throw new IllegalStateException("Solo se puede senar un alquiler en estado INGRESADO.");
         }
         Pago sena = new Pago(importe, medioPago, usuario, TipoPago.SENIA);
+        String estadoPagoAnterior = sena.getEstado().name();
         sena.confirmar();
         alquiler.agregarPago(sena);
+
+        HistorialController historial = HistorialController.getInstance();
+        historial.registrar(TipoEntidad.PAGO, String.valueOf(sena.getId()),
+                estadoPagoAnterior, sena.getEstado().name(), usuario);
+
         String anterior = alquiler.getEstado().name();
         alquiler.cambiarEstado(EstadoAlquiler.CONFIRMADO);
-        HistorialController.getInstance().registrar(TipoEntidad.ALQUILER,
+        historial.registrar(TipoEntidad.ALQUILER,
                 String.valueOf(alquiler.getId()), anterior, "CONFIRMADO", usuario);
         return sena;
     }
