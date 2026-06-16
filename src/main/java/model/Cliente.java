@@ -6,17 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Cliente particular o empresa. Identificado por DNI/CUIT.
- *
- * <p>Mantiene la coleccion de sus alquileres (relacion Cliente 1 -> 0..* Alquiler),
- * lo que permite consultar sus alquileres sin que {@code ClienteController}
- * dependa de {@code AlquilerController} (se respeta el grafo unidireccional).</p>
- *
- * <p>Soporta una <b>condicion particular</b> opcional: un porcentaje de
- * recargo/descuento negociado, valido solo dentro de un periodo de vigencia.
- * Si esta vigente, reemplaza al porcentaje general del tipo de alquiler.</p>
- */
 public class Cliente {
 
     private final String dniCuit;
@@ -29,8 +18,7 @@ public class Cliente {
 
     private final List<Alquiler> alquileres;
 
-    // Condicion particular parametrizable por cliente (opcional).
-    private Double porcentajeEspecial;   // null => sin condicion particular
+    private Double porcentajeEspecial;
     private LocalDate vigenciaDesde;
     private LocalDate vigenciaHasta;
 
@@ -45,7 +33,6 @@ public class Cliente {
         this.alquileres = new ArrayList<>();
     }
 
-    /** Marca el cliente como activo. */
     public void activar() {
         this.estado = EstadoCliente.ACTIVO;
     }
@@ -54,7 +41,6 @@ public class Cliente {
         this.estado = EstadoCliente.INACTIVO;
     }
 
-    /** Suma credito a favor (por ejemplo, sena reintegrada en una cancelacion). */
     public void agregarCredito(double importe) {
         if (importe < 0) {
             throw new IllegalArgumentException("El credito a agregar no puede ser negativo.");
@@ -62,25 +48,16 @@ public class Cliente {
         this.creditoAFavor += importe;
     }
 
-    /** Asocia un alquiler a este cliente (lado 1 de la relacion). */
     public void agregarAlquiler(Alquiler alquiler) {
         this.alquileres.add(alquiler);
     }
 
-    /**
-     * Define una condicion particular de porcentaje con vigencia.
-     *
-     * @param porcentaje magnitud del recargo/descuento especial (en %)
-     * @param desde      inicio de vigencia (inclusive)
-     * @param hasta      fin de vigencia (inclusive)
-     */
     public void setCondicionParticular(double porcentaje, LocalDate desde, LocalDate hasta) {
         this.porcentajeEspecial = porcentaje;
         this.vigenciaDesde = desde;
         this.vigenciaHasta = hasta;
     }
 
-    /** Indica si en la fecha dada el cliente tiene una condicion particular vigente. */
     public boolean tieneCondicionVigente(LocalDate fecha) {
         if (porcentajeEspecial == null || vigenciaDesde == null || vigenciaHasta == null) {
             return false;
@@ -136,7 +113,6 @@ public class Cliente {
         return creditoAFavor;
     }
 
-    /** Devuelve una copia de la lista de alquileres para no exponer la coleccion interna. */
     public List<Alquiler> getAlquileres() {
         return new ArrayList<>(alquileres);
     }

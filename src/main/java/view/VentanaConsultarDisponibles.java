@@ -19,12 +19,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
-/**
- * Vista Swing del caso de uso UC5 - Consultar Vehiculos Disponibles.
- *
- * <p>Valida el formato de las fechas y delega la consulta en
- * {@link AlquilerController}. Muestra el resultado en una tabla.</p>
- */
 public class VentanaConsultarDisponibles extends JFrame {
 
     private final JTextField txtFechaInicio = new JTextField(10);

@@ -19,23 +19,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controlador Singleton <b>orquestador</b> del negocio. Coordina los casos de
- * uso de alquiler (UC3 solicitar, UC4 finalizar, UC5 consultar disponibles) y
- * el ciclo de vida (confirmar con sena, iniciar, cancelar).
- *
- * <p>Depende de {@link ClienteController} y {@link VehiculoController} (via
- * {@code getInstance()}) y registra auditoria con {@link HistorialController}.
- * El grafo de dependencias es unidireccional: ningun controlador maestro
- * depende de este.</p>
- */
 public class AlquilerController {
 
     private static AlquilerController instancia;
 
     private final List<Alquiler> alquileres;
 
-    // Porcentajes generales parametrizables (pueden cambiarse en tiempo de ejecucion).
     private double porcentajeDescuentoCorporativo = AlquilerCorporativo.DESCUENTO_POR_DEFECTO;
     private double porcentajeRecargoTuristico = AlquilerTuristico.RECARGO_POR_DEFECTO;
 
@@ -50,17 +39,6 @@ public class AlquilerController {
         return instancia;
     }
 
-    // ---------------------------------------------------------------------
-    // UC3 - Solicitar alquiler
-    // ---------------------------------------------------------------------
-
-    /**
-     * Solicita un alquiler (UC3). Verifica que existan cliente y vehiculo, que
-     * el vehiculo este disponible en el periodo (sin superposicion), crea el
-     * alquiler del tipo indicado y lo deja en estado INGRESADO.
-     *
-     * @param claseAlquiler "COMUN", "CORPORATIVO" o "TURISTICO"
-     */
     public Alquiler solicitarAlquiler(String dniCuit, String patente, LocalDate fechaInicio,
                                       LocalDate fechaDevolucionEstimada, String claseAlquiler, String usuario) {
         Cliente cliente = ClienteController.getInstance().buscarPorDni(dniCuit);
@@ -84,11 +62,6 @@ public class AlquilerController {
         return alquiler;
     }
 
-    /**
-     * Crea el alquiler concreto segun la clase indicada (polimorfismo). Para los
-     * tipos con porcentaje, usa la condicion particular vigente del cliente si
-     * existe; en caso contrario, el porcentaje general parametrizable.
-     */
     private Alquiler crearAlquiler(String claseAlquiler, Cliente cliente, Vehiculo vehiculo,
                                    LocalDate fechaInicio, LocalDate fechaDevolucionEstimada) {
         int kilometrajeInicial = vehiculo.getKilometrajeActual();
@@ -113,11 +86,6 @@ public class AlquilerController {
         }
     }
 
-    // ---------------------------------------------------------------------
-    // Ciclo de vida: confirmar con sena, iniciar, cancelar
-    // ---------------------------------------------------------------------
-
-    /** Registra la sena y confirma la reserva (INGRESADO -> CONFIRMADO). */
     public Pago confirmarAlquilerConSenia(int idAlquiler, double importe, MedioPago medioPago, String usuario) {
         Alquiler alquiler = obtenerAlquiler(idAlquiler);
         if (alquiler.getEstado() != EstadoAlquiler.INGRESADO) {
@@ -133,7 +101,6 @@ public class AlquilerController {
         return sena;
     }
 
-    /** Inicia el alquiler al llegar la fecha de inicio (CONFIRMADO -> EN_CURSO). */
     public void iniciarAlquiler(int idAlquiler, String usuario) {
         Alquiler alquiler = obtenerAlquiler(idAlquiler);
         if (alquiler.getEstado() != EstadoAlquiler.CONFIRMADO) {
@@ -151,11 +118,6 @@ public class AlquilerController {
         historial.registrar(TipoEntidad.VEHICULO, vehiculo.getPatente(), estadoVehAnterior, "ALQUILADO", usuario);
     }
 
-    /**
-     * Cancela un alquiler. Si estaba confirmado y se cancela con mas de 48 horas
-     * de anticipacion, la sena queda como credito a favor del cliente; con menos
-     * de 48 horas, la sena no se reintegra.
-     */
     public void cancelarAlquiler(int idAlquiler, LocalDateTime fechaCancelacion, String usuario) {
         Alquiler alquiler = obtenerAlquiler(idAlquiler);
         if (alquiler.getEstado() == EstadoAlquiler.FINALIZADO
@@ -180,15 +142,6 @@ public class AlquilerController {
         }
     }
 
-    // ---------------------------------------------------------------------
-    // UC4 - Finalizar alquiler y calcular saldo
-    // ---------------------------------------------------------------------
-
-    /**
-     * Finaliza el alquiler (UC4): registra kilometraje final y fecha de
-     * devolucion real, calcula el importe total (polimorfico) y el saldo
-     * pendiente, libera el vehiculo y devuelve el saldo a cobrar.
-     */
     public double finalizarAlquiler(int idAlquiler, int kilometrajeFinal,
                                     LocalDate fechaDevolucionReal, String usuario) {
         Alquiler alquiler = obtenerAlquiler(idAlquiler);
@@ -219,14 +172,6 @@ public class AlquilerController {
         return saldoPendiente;
     }
 
-    // ---------------------------------------------------------------------
-    // UC5 y demas consultas del enunciado
-    // ---------------------------------------------------------------------
-
-    /**
-     * UC5: vehiculos disponibles para un periodo y (opcionalmente) un tipo.
-     * Si {@code tipoVehiculo} es null, no se filtra por tipo.
-     */
     public List<Vehiculo> consultarVehiculosDisponibles(LocalDate fechaInicio, LocalDate fechaFin,
                                                         TipoVehiculo tipoVehiculo) {
         List<Vehiculo> resultado = new ArrayList<>();
@@ -241,10 +186,6 @@ public class AlquilerController {
         return resultado;
     }
 
-    /**
-     * Consulta 1 del enunciado: total recaudado por alquileres finalizados cuya
-     * fecha de devolucion real cae dentro del periodo [desde, hasta].
-     */
     public double totalRecaudadoEnPeriodo(LocalDate desde, LocalDate hasta) {
         double total = 0.0;
         for (Alquiler alquiler : alquileres) {
@@ -259,17 +200,9 @@ public class AlquilerController {
         return total;
     }
 
-    /**
-     * Consulta 3 del enunciado: porcentaje de recargo (positivo) o descuento
-     * (negativo) aplicable a un alquiler segun su tipo y la condicion del cliente.
-     */
     public double consultarPorcentajeAplicable(int idAlquiler) {
         return obtenerAlquiler(idAlquiler).getPorcentajeAplicado();
     }
-
-    // ---------------------------------------------------------------------
-    // Auxiliares
-    // ---------------------------------------------------------------------
 
     private Alquiler buscarAlquilerPorId(int idAlquiler) {
         for (Alquiler alquiler : alquileres) {

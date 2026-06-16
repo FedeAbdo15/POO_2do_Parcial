@@ -17,10 +17,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Prueba de {@code Vehiculo.estaDisponible(...)}: deteccion de superposicion de
- * fechas contra alquileres activos.
- */
 class VehiculoDisponibilidadTest {
 
     @Test
@@ -29,25 +25,20 @@ class VehiculoDisponibilidadTest {
         Vehiculo vehiculo = new Vehiculo("DD333DD", "Marca", "Modelo", 2022, 0, 10000,
                 TipoVehiculo.AUTO, TipoCombustible.NAFTA, 200, 50);
 
-        // Alquiler activo (confirmado) del 10 al 15 de enero de 2026.
         Alquiler reserva = new AlquilerComun(cliente, vehiculo,
                 LocalDate.of(2026, 1, 10), LocalDate.of(2026, 1, 15), 0);
         reserva.cambiarEstado(EstadoAlquiler.CONFIRMADO);
         List<Alquiler> alquileres = new ArrayList<>();
         alquileres.add(reserva);
 
-        // Periodo que se superpone (12-14) -> NO disponible.
         assertFalse(vehiculo.estaDisponible(LocalDate.of(2026, 1, 12), LocalDate.of(2026, 1, 14), alquileres));
 
-        // Periodo posterior sin superposicion (16-18) -> disponible.
         assertTrue(vehiculo.estaDisponible(LocalDate.of(2026, 1, 16), LocalDate.of(2026, 1, 18), alquileres));
 
-        // Un alquiler cancelado no bloquea la disponibilidad.
         reserva.cambiarEstado(EstadoAlquiler.CANCELADO);
         assertTrue(vehiculo.estaDisponible(LocalDate.of(2026, 1, 12), LocalDate.of(2026, 1, 14), alquileres));
 
-        // Un vehiculo en mantenimiento no esta disponible aunque no haya reservas.
-        reserva.cambiarEstado(EstadoAlquiler.CONFIRMADO); // reactivamos para asegurar que el corte es por estado
+        reserva.cambiarEstado(EstadoAlquiler.CONFIRMADO);
         vehiculo.cambiarEstado(EstadoVehiculo.MANTENIMIENTO);
         assertFalse(vehiculo.estaDisponible(LocalDate.of(2026, 5, 1), LocalDate.of(2026, 5, 2), new ArrayList<>()));
     }

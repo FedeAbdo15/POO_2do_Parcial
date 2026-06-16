@@ -6,11 +6,6 @@ import enums.TipoPago;
 
 import java.time.LocalDateTime;
 
-/**
- * Pago asociado a un alquiler. Puede ser una <b>sena</b> (para confirmar la
- * reserva) o el <b>saldo</b> final. Forma parte de la composicion de
- * {@link Alquiler}: se crea y vive dentro del alquiler.
- */
 public class Pago {
 
     private static int proximoId = 1;
@@ -36,17 +31,14 @@ public class Pago {
         this.tipoPago = tipoPago;
     }
 
-    /** Confirma el pago (queda efectivamente acreditado). */
     public void confirmar() {
         this.estado = EstadoPago.CONFIRMADO;
     }
 
-    /** Anula el pago. */
     public void anular() {
         this.estado = EstadoPago.ANULADO;
     }
 
-    /** Indica si este pago es una sena que ya fue confirmada. */
     public boolean esSeniaConfirmada() {
         return tipoPago == TipoPago.SENIA && estado == EstadoPago.CONFIRMADO;
     }

@@ -7,13 +7,6 @@ import enums.TipoVehiculo;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Vehiculo de la flota. Identificado por su patente.
- *
- * <p>Puede tener condiciones particulares: una cantidad de kilometros incluidos
- * por dia y un costo por kilometro excedente. Si {@code kmIncluidosPorDia <= 0}
- * se interpreta como kilometraje ilimitado (sin excedente).</p>
- */
 public class Vehiculo {
 
     private final String patente;
@@ -48,11 +41,6 @@ public class Vehiculo {
         this.estado = nuevoEstado;
     }
 
-    /**
-     * Determina si el vehiculo esta disponible para el periodo solicitado.
-     * No debe estar dado de baja ni en mantenimiento, y no debe tener alquileres
-     * activos (ingresado/confirmado/en curso) cuyas fechas se superpongan.
-     */
     public boolean estaDisponible(LocalDate fechaInicio, LocalDate fechaFin, List<Alquiler> alquileres) {
         if (estado == EstadoVehiculo.BAJA || estado == EstadoVehiculo.MANTENIMIENTO) {
             return false;
@@ -67,7 +55,6 @@ public class Vehiculo {
         return true;
     }
 
-    /** Actualiza el kilometraje del vehiculo al devolverlo. */
     public void actualizarKilometraje(int kilometrajeFinal) {
         if (kilometrajeFinal < this.kilometrajeActual) {
             throw new IllegalArgumentException("El kilometraje final no puede ser menor al actual.");
@@ -75,16 +62,9 @@ public class Vehiculo {
         this.kilometrajeActual = kilometrajeFinal;
     }
 
-    /**
-     * Calcula el costo de los kilometros excedentes para un periodo.
-     *
-     * @param kmRecorridos kilometros recorridos durante el alquiler
-     * @param dias         cantidad de dias del alquiler
-     * @return costo de los km que superan el limite incluido (0 si no hay limite o no se excede)
-     */
     public double calcularCostoKmExcedente(int kmRecorridos, int dias) {
         if (kmIncluidosPorDia <= 0) {
-            return 0.0; // kilometraje ilimitado
+            return 0.0;
         }
         int kmIncluidos = kmIncluidosPorDia * dias;
         int exceso = Math.max(0, kmRecorridos - kmIncluidos);

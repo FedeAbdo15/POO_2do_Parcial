@@ -9,10 +9,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import java.time.LocalDate;
 
-/**
- * Punto de entrada de la aplicacion. Carga datos de demostracion a traves de
- * los controladores Singleton y abre el menu principal con las dos vistas Swing.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -21,13 +17,12 @@ public class Main {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
-            // Si falla, se usa el look and feel por defecto.
+
         }
 
         SwingUtilities.invokeLater(() -> new MenuPrincipal().setVisible(true));
     }
 
-    /** Precarga clientes, vehiculos y un alquiler de ejemplo. */
     private static void cargarDatosDemo() {
         ClienteController clientes = ClienteController.getInstance();
         VehiculoController vehiculos = VehiculoController.getInstance();
@@ -47,7 +42,6 @@ public class Main {
         vehiculos.registrarVehiculo("AE012FF", "Honda", "CB 190", 2023, 12000, 15000,
                 TipoVehiculo.MOTO, TipoCombustible.NAFTA, 150, 60, "admin");
 
-        // Alquiler de ejemplo: deja el auto AA123BB reservado del 1 al 5 de julio de 2026.
         alquileres.solicitarAlquiler("20304050607", "AA123BB",
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 5), "COMUN", "admin");
     }

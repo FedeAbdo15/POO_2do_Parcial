@@ -15,12 +15,6 @@ import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-/**
- * Vista Swing del caso de uso UC3 - Solicitar Alquiler.
- *
- * <p>La vista solo valida el formato de la entrada y delega toda la logica de
- * negocio en {@link AlquilerController}. No contiene reglas de negocio.</p>
- */
 public class VentanaSolicitarAlquiler extends JFrame {
 
     private final JTextField txtDniCuit = new JTextField();
@@ -63,7 +57,7 @@ public class VentanaSolicitarAlquiler extends JFrame {
     }
 
     private void solicitar() {
-        // Validaciones de entrada (responsabilidad de la vista).
+
         String dni = txtDniCuit.getText().trim();
         String patente = txtPatente.getText().trim();
         String usuario = txtUsuario.getText().trim();
@@ -88,7 +82,6 @@ public class VentanaSolicitarAlquiler extends JFrame {
 
         String tipo = (String) cboTipo.getSelectedItem();
 
-        // Delegacion al controlador (logica de negocio).
         try {
             Alquiler alquiler = AlquilerController.getInstance()
                     .solicitarAlquiler(dni, patente, fechaInicio, fechaDevolucion, tipo, usuario);

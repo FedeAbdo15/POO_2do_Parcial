@@ -2,24 +2,17 @@ package model;
 
 import java.time.LocalDate;
 
-/**
- * Alquiler turistico: aplica un <b>recargo</b> sobre el importe base.
- * El porcentaje es parametrizable (15% por defecto), pudiendo provenir de una
- * condicion particular negociada con el cliente.
- */
 public class AlquilerTuristico extends Alquiler {
 
     public static final double RECARGO_POR_DEFECTO = 15.0;
 
     private double porcentajeRecargo;
 
-    /** Crea el alquiler con el recargo por defecto. */
     public AlquilerTuristico(Cliente cliente, Vehiculo vehiculo, LocalDate fechaInicio,
                              LocalDate fechaDevolucionEstimada, int kilometrajeInicial) {
         this(cliente, vehiculo, fechaInicio, fechaDevolucionEstimada, kilometrajeInicial, RECARGO_POR_DEFECTO);
     }
 
-    /** Crea el alquiler con un recargo especifico (parametrizable). */
     public AlquilerTuristico(Cliente cliente, Vehiculo vehiculo, LocalDate fechaInicio,
                              LocalDate fechaDevolucionEstimada, int kilometrajeInicial,
                              double porcentajeRecargo) {
@@ -35,7 +28,7 @@ public class AlquilerTuristico extends Alquiler {
 
     @Override
     public double getPorcentajeAplicado() {
-        return porcentajeRecargo; // positivo: es un recargo
+        return porcentajeRecargo;
     }
 
     public double getPorcentajeRecargo() {

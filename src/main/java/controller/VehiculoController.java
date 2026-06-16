@@ -8,10 +8,6 @@ import model.Vehiculo;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controlador Singleton de la entidad maestra {@link Vehiculo}.
- * No depende de otros controladores (salvo el de auditoria).
- */
 public class VehiculoController {
 
     private static VehiculoController instancia;
@@ -29,10 +25,6 @@ public class VehiculoController {
         return instancia;
     }
 
-    /**
-     * Registra un nuevo vehiculo (UC2). Valida que la patente no este repetida,
-     * lo deja disponible y registra el cambio en la auditoria.
-     */
     public Vehiculo registrarVehiculo(String patente, String marca, String modelo, int anio,
                                       int kilometrajeActual, double valorDiario, TipoVehiculo tipoVehiculo,
                                       TipoCombustible tipoCombustible, int kmIncluidosPorDia,
@@ -51,7 +43,6 @@ public class VehiculoController {
         return vehiculo;
     }
 
-    /** Busca un vehiculo por patente (sin distinguir mayusculas). Devuelve null si no existe. */
     public Vehiculo buscarPorPatente(String patente) {
         for (Vehiculo vehiculo : vehiculos) {
             if (vehiculo.getPatente().equalsIgnoreCase(patente)) {

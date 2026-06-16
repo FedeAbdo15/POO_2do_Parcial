@@ -10,11 +10,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
-/**
- * Menu principal de la aplicacion. Permite abrir las dos funcionalidades con
- * interfaz grafica: solicitar un alquiler (UC3) y consultar vehiculos
- * disponibles (UC5).
- */
 public class MenuPrincipal extends JFrame {
 
     public MenuPrincipal() {

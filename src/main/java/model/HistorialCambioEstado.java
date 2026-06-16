@@ -4,14 +4,6 @@ import enums.TipoEntidad;
 
 import java.time.LocalDateTime;
 
-/**
- * Registro de auditoria de un cambio de estado de cualquier entidad del sistema
- * (cliente, vehiculo, alquiler o pago).
- *
- * <p>La referencia a la entidad afectada es <b>debil</b>: se guarda el tipo de
- * entidad mas un identificador en texto (DNI/CUIT, patente o id), no una
- * asociacion directa por objeto. Esto desacopla la auditoria del modelo.</p>
- */
 public class HistorialCambioEstado {
 
     private static int proximoId = 1;

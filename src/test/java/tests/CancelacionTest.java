@@ -18,10 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Prueba de la regla de cancelacion: con mas de 48 hs de anticipacion la sena
- * se reintegra como credito; con menos de 48 hs no se reintegra.
- */
 class CancelacionTest {
 
     private AlquilerComun alquilerConfirmadoConSenia(Cliente cliente, double sena) {
@@ -38,7 +34,7 @@ class CancelacionTest {
 
     @Test
     void cancelacionConMasDe48hsReintegraSeniaYConMenosNo() {
-        // Caso 1: cancela 72 hs antes del inicio (2026-03-10) -> reintegra.
+
         Cliente cliente1 = new Cliente("22222222", "Cliente 1", "0", "c1@t.com", "-");
         AlquilerComun alquiler1 = alquilerConfirmadoConSenia(cliente1, 5000);
         LocalDateTime cancela72hsAntes = LocalDateTime.of(2026, 3, 7, 0, 0);
@@ -49,7 +45,6 @@ class CancelacionTest {
         }
         assertEquals(5000.0, cliente1.getCreditoAFavor(), 0.001);
 
-        // Caso 2: cancela 24 hs antes del inicio -> NO reintegra.
         Cliente cliente2 = new Cliente("33333333", "Cliente 2", "0", "c2@t.com", "-");
         AlquilerComun alquiler2 = alquilerConfirmadoConSenia(cliente2, 5000);
         LocalDateTime cancela24hsAntes = LocalDateTime.of(2026, 3, 9, 0, 0);
