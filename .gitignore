@@ -1,0 +1,11 @@
+# Salida de compilacion
+/out/
+*.class
+
+# Archivos de IntelliJ que no conviene versionar
+.idea/workspace.xml
+.idea/shelf/
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
